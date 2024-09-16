@@ -1,0 +1,190 @@
+/*HTML CODE*/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="calculator">
+        <div id="display" class="display">0</div>
+        <div class="buttons">
+            <!-- Row 1 -->
+            <button class="btn" data-number="7">7</button>
+            <button class="btn" data-number="8">8</button>
+            <button class="btn" data-number="9">9</button>
+            <button class="btn operator" data-operator="/">/</button>
+
+            <!-- Row 2 -->
+            <button class="btn" data-number="4">4</button>
+            <button class="btn" data-number="5">5</button>
+            <button class="btn" data-number="6">6</button>
+            <button class="btn operator" data-operator="*">*</button>
+
+            <!-- Row 3 -->
+            <button class="btn" data-number="1">1</button>
+            <button class="btn" data-number="2">2</button>
+            <button class="btn" data-number="3">3</button>
+            <button class="btn operator" data-operator="-">-</button>
+
+            <!-- Row 4 -->
+            <button class="btn" data-number="0">0</button>
+            <button class="btn" id="clear">C</button>
+            <button class="btn" id="equals">=</button>
+            <button class="btn operator" data-operator="+">+</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+/*CSS CODE*/
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+.calculator {
+    width: 250px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+.display {
+    background-color: #333;
+    color: #fff;
+    text-align: right;
+    padding: 20px;
+    font-size: 2em;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.btn {
+    padding: 20px;
+    font-size: 1.5em;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: #ddd;
+}
+
+.operator {
+    background-color: #f9a825;
+    color: white;
+}
+
+#clear {
+    background-color: #e53935;
+    color: white;
+}
+
+#equals {
+    background-color: #43a047;
+    color: white;
+    grid-column: span 2;
+}
+
+/*JAVASCRIPT CODE*/
+
+// Select elements
+const display = document.getElementById('display');
+const buttons = document.querySelectorAll('.btn');
+const clearBtn = document.getElementById('clear');
+const equalsBtn = document.getElementById('equals');
+
+let currentInput = '';
+let previousInput = '';
+let operator = null;
+
+// Function to update the display
+function updateDisplay(value) {
+    display.textContent = value;
+}
+
+// Function to clear the calculator
+function clear() {
+    currentInput = '';
+    previousInput = '';
+    operator = null;
+    updateDisplay('0');
+}
+
+// Event listeners for number buttons
+buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        if (button.hasAttribute('data-number')) {
+            currentInput += button.getAttribute('data-number');
+            updateDisplay(currentInput);
+        }
+    });
+});
+
+// Event listeners for operator buttons
+buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        if (button.hasAttribute('data-operator')) {
+            if (currentInput === '') return;
+            operator = button.getAttribute('data-operator');
+            previousInput = currentInput;
+            currentInput = '';
+        }
+    });
+});
+
+// Event listener for equals button
+equalsBtn.addEventListener('click', () => {
+    if (currentInput === '' || previousInput === '') return;
+    let result;
+    switch (operator) {
+        case '+':
+            result = parseFloat(previousInput) + parseFloat(currentInput);
+            break;
+        case '-':
+            result = parseFloat(previousInput) - parseFloat(currentInput);
+            break;
+        case '*':
+            result = parseFloat(previousInput) * parseFloat(currentInput);
+            break;
+        case '/':
+            result = parseFloat(previousInput) / parseFloat(currentInput);
+            break;
+        default:
+            return;
+    }
+    currentInput = result;
+    operator = null;
+    previousInput = '';
+    updateDisplay(result);
+});
+
+// Event listener for clear button
+clearBtn.addEventListener('click', clear);
+
+// Initialize the calculator with 0
+clear();
